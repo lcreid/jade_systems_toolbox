@@ -18,3 +18,4 @@ Gemfile.lock
 compose.override.yml
 compose.yml
 
+*.gem
