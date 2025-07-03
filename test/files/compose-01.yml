@@ -1,0 +1,11 @@
+services:
+  web:
+    ports:
+      - "3000"
+  selenium:
+    ports:
+      - '4444:4444'
+      - '5900:5900'
+      - '7900:7900'
+  db:
+    environment: IGNORE_THIS=1
