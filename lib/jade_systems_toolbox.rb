@@ -8,6 +8,11 @@ module JadeSystemsToolbox
   class Error < StandardError; end
 
   class << self
+    def init
+      initialize_docker
+      initialize_vscode
+    end
+
     def initialize_docker
       get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-sqlite/compose.yml")
 
@@ -20,6 +25,8 @@ module JadeSystemsToolbox
     end
 
     def initialize_vscode
+      # TODO: .devcontainer.json has compose.override.yml listed in it, but maybe we don't have it
+      # for all O/Ss?
       get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/.devcontainer.json")
     end
 
@@ -36,6 +43,7 @@ module JadeSystemsToolbox
       request = Net::HTTP.new(uri.host, uri.port)
       request.use_ssl = true
       response = request.get(uri.path)
+
       case response
       when Net::HTTPSuccess
         response.body
@@ -44,6 +52,18 @@ module JadeSystemsToolbox
       else
         response.error!
       end
+    end
+
+    def up
+      `docker compose up -d`
+    end
+
+    def edit
+      `devcontainer open`
+    end
+
+    def down
+      `docker compose down`
     end
   end
 end
