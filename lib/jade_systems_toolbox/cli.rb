@@ -1,5 +1,11 @@
 module JadeSystemsToolbox
   class Cli < Thor
+    # This and other improvements from Matt: https://mattbrictson.com/blog/fixing-thor-cli-behavior
+    check_unknown_options!
+
+    map "-h" => :help
+    map "--help" => :help
+
     class_option :compose_file, default: "compose.yml"
     class_option :verbose, type: :boolean, default: false, aliases: "-v"
 
