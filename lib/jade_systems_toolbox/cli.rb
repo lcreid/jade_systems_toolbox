@@ -1,6 +1,7 @@
 module JadeSystemsToolbox
   class Cli < Thor
     class_option :compose_file, default: "compose.yml"
+    class_option :verbose, type: :boolean, default: false, aliases: "-v"
 
     desc "down", "docker compose down"
     def down
@@ -26,7 +27,7 @@ module JadeSystemsToolbox
       when "linux"
         get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/Linux/compose.override.yml")
       else
-        raise Error, "Not implemented for #{Gem::Platform.local.os}"
+        raise Error.new("Not implemented for #{Gem::Platform.local.os}", options[:verbose])
       end
     end
 
@@ -116,7 +117,7 @@ module JadeSystemsToolbox
     end
 
     def get_file_from_internet(redirects: 10, url:)
-      raise Error, "Too many redirects" if redirects.zero?
+      raise Errorl.new("Too many redirects", options[:verbose]) if redirects.zero?
 
       uri = URI.parse(url)
       request = Net::HTTP.new(uri.host, uri.port)

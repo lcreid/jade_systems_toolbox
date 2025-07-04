@@ -8,7 +8,14 @@ require "yaml"
 
 require_relative "jade_systems_toolbox/version"
 require_relative "jade_systems_toolbox/cli"
+require_relative "jade_systems_toolbox/error_reporter"
 
 module JadeSystemsToolbox
-  class Error < StandardError; end
+  class Error < StandardError
+    def initialize(message, verbose = false)
+      @verbose = verbose
+      super(message)
+    end
+    attr_reader :verbose
+  end
 end

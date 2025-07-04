@@ -2,4 +2,9 @@
 
 require "jade_systems_toolbox"
 
-JadeSystemsToolbox::Cli.start(ARGV)
+begin
+  JadeSystemsToolbox::Cli.start(ARGV)
+rescue StandardError => exception
+  JadeSystemsToolbox::ErrorReporter.report(exception)
+  exit(1)
+end
