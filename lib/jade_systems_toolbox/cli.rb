@@ -9,7 +9,7 @@ module JadeSystemsToolbox
 
     desc "edit", "devcontainer edit"
     def edit
-      `devcontainer open`
+            `devcontainer open`
     end
 
     desc "init", "Initialize compose files and devcontainer.json"
@@ -72,12 +72,37 @@ module JadeSystemsToolbox
       end
     end
 
+    desc "server [COMMAND]", "Run the server in the container"
+    option :service, default: "web"
+    def server(command = "bin/dev")
+      service = options[:service]
+      command_with_io("docker compose exec #{service} #{command}")
+    end
+
     desc "up", "docker compose up -d"
     def up
       `docker compose up -d`
     end
 
     private
+
+    def command_with_io(command)
+      # spawn(command)
+      # Process.wait
+      data = {:out => [], :err => []}
+      Open3.popen3(command) do |stdin, stdout, stderr, thread|
+        # read each stream from a new thread
+        { :out => stdout, :err => stderr }.each do |key, stream|
+          Thread.new do
+            until (raw_line = stream.gets).nil? do
+              puts raw_line
+            end
+          end
+        end
+
+        thread.join # don't exit until the external process is done
+      end
+    end
 
     def compose_yaml(compose_file = "compose.yml") = @compose_yaml ||= YAML.load_file(compose_file)
 

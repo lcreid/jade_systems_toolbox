@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "thor"
 require "debug"
 require "net/http"
+require "open3"
+require "thor"
 require "yaml"
 
 require_relative "jade_systems_toolbox/version"
