@@ -86,17 +86,20 @@ module JadeSystemsToolbox
 
     private
 
+    # https://nickcharlton.net/posts/ruby-subprocesses-with-stdout-stderr-streams.html
     def command_with_io(command)
-      # spawn(command)
-      # Process.wait
-      data = {:out => [], :err => []}
-      Open3.popen3(command) do |stdin, stdout, stderr, thread|
-        # read each stream from a new thread
-        { :out => stdout, :err => stderr }.each do |key, stream|
+      Open3.popen3(command) do |child_stdin, child_stdout, child_stderr, thread|
+        { :out => child_stdout, :err => child_stderr }.each do |key, stream|
           Thread.new do
             until (raw_line = stream.gets).nil? do
               puts raw_line
             end
+          end
+        end
+
+        Thread.new do
+          until (raw_line = $stdin.gets).nil? do
+            child_stdin.puts raw_line
           end
         end
 
