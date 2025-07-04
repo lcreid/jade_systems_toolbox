@@ -1,6 +1,6 @@
 module JadeSystemsToolbox
   class Cli < Thor
-    class_option :compose_file
+    class_option :compose_file, default: "compose.yml"
 
     desc "down", "docker compose down"
     def down
@@ -62,7 +62,7 @@ module JadeSystemsToolbox
 
     desc "ports", "Get the host ports for the container ports defined in `compose.yml`"
     def ports
-      services = compose_yaml(options[:compose_file])["services"]
+      services = compose_yaml["services"]
       service_ports = services.map { |service, attributes| [service, attributes&.[]("ports")] }.to_h
 
       service_ports.each do |service, ports|
@@ -107,7 +107,7 @@ module JadeSystemsToolbox
       end
     end
 
-    def compose_yaml(compose_file = "compose.yml") = @compose_yaml ||= YAML.load_file(compose_file)
+    def compose_yaml = @compose_yaml ||= YAML.load_file(options[:compose_file])
 
     def get_and_save_file(url)
       file_name = Pathname.new(url).basename.to_s
