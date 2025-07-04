@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require "bundler/setup"
 require "jade_systems_toolbox"
 
 JadeSystemsToolbox::Cli.start(ARGV)

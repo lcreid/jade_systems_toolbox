@@ -1,5 +1,3 @@
-# require "thor"
-
 module JadeSystemsToolbox
   class Cli < Thor
     class_option :compose_file
@@ -39,14 +37,26 @@ module JadeSystemsToolbox
       get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/.devcontainer.json")
     end
 
-    desc "open SERVICE PATH PORT PROTOCOL", "Open a page on the SERVICE's PORT"
-    def open(service = "web", path = "/", container_port = 3000, protocol = "http")
-      container_ports = compose_yaml.dig("services", service, ports)
+    option :service, default: "web"
+    option :path, default: "/"
+    option :container_port, default: 3000, type: :numeric
+    option :protocol, default: "http"
+    desc "open", "Open a page on the SERVICE's PORT"
+    def open
+      service = options[:service]
+      path = options[:path]
+      container_port = options[:container_port]
+      protocol = options[:protocol]
+
+      container_ports = compose_yaml.dig("services", "service", "ports")
+      container_port = container_ports[0] || container_port
       `open "#{protocol}://localhost:#{host_port_from_container_port(service:, container_port:)}#{path}"`
     end
 
-    desc "port SERVICE CONTAINER_PORT", "Get the host port for the SERVICE's container port CONTAINER_PORT"
-    def port(service = "web", container_port = 3000)
+    desc "port [CONTAINER_PORT]", "Get the host port for the CONTAINER_PORT's container port CONTAINER_PORT"
+    option :service, default: "web"
+    def port(container_port = 3000)
+      service = options[:service]
       puts host_port_from_container_port(service:, container_port:)
     end
 
