@@ -100,6 +100,13 @@ module JadeSystemsToolbox
       command_with_io("docker compose exec #{service} #{command}")
     end
 
+    desc "terminal", "Run a shell in the container"
+    option :service, default: "web"
+    def terminal
+      service = options[:service]
+      command_with_io("docker compose exec #{service} '/bin/bash'")
+    end
+
     desc "up", "docker compose up -d"
     def up
       `docker compose up -d`
