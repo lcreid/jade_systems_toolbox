@@ -3,6 +3,7 @@
 require "debug"
 require "net/http"
 require "open3"
+require "pathname"
 require "thor"
 require "yaml"
 

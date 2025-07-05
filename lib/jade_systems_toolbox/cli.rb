@@ -20,18 +20,28 @@ module JadeSystemsToolbox
 
     desc "edit", "devcontainer edit"
     def edit
-            `devcontainer open`
+      `devcontainer open`
     end
 
+    option :database, default: "sqlite", aliases: "-d"
+    option :ruby_version, default: "3.4", aliases: "-r"
+    option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
     desc "init", "Initialize compose files and devcontainer.json"
     def init
-      initialize_docker
-      initialize_vscode
+      invoke :initialize_docker
+      invoke :initialize_vscode, [], {}
     end
 
+    option :database, default: "sqlite", aliases: "-d"
+    option :ruby_version, default: "3.4", aliases: "-r"
+    option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
     desc "initialize_docker", "Initialize compose files"
     def initialize_docker
-      get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-sqlite/compose.yml")
+      get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-sqlite/compose.yml") do |file_contents|
+        file_contents.gsub!(
+          /jade:rails-app-[0-9]+\.[0-9]+-\w+-\w+$/,
+          "jade:rails-app-#{options[:ruby_version] || '3.4'}-#{options[:database] || "sqlite"}-#{options[:distro_version] || bookworm}")
+      end
 
       case Gem::Platform.local.os
       when "linux"
@@ -60,7 +70,7 @@ module JadeSystemsToolbox
       protocol = options[:protocol]
 
       container_ports = compose_yaml.dig("services", "service", "ports")
-      container_port = container_ports[0] || container_port
+      container_port = container_ports&.[](0) || container_port
       `open "#{protocol}://localhost:#{host_port_from_container_port(service:, container_port:)}#{path}"`
     end
 
@@ -123,6 +133,7 @@ module JadeSystemsToolbox
     def get_and_save_file(url)
       file_name = Pathname.new(url).basename.to_s
       file_contents = get_file_from_internet(url: )
+      yield file_contents if block_given?
       File.write(file_name, file_contents)
     end
 

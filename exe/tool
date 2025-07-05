@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+# To debug without installing, run as `ruby -I lib exe/tool...`
 require "jade_systems_toolbox"
 
 begin
