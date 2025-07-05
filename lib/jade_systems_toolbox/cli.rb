@@ -3,6 +3,10 @@ module JadeSystemsToolbox
     # This and other improvements from Matt: https://mattbrictson.com/blog/fixing-thor-cli-behavior
     check_unknown_options!
 
+    class << self
+      def exit_on_failure? = true
+    end
+
     map "-h" => :help
     map "--help" => :help
 
