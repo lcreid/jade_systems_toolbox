@@ -101,7 +101,7 @@ module JadeSystemsToolbox
       service = options[:service]
       workdir = "-w #{options[:work_dir]} " unless options[:work_dir].nil?
       puts("docker compose exec #{workdir}#{service} #{command}")
-      command_with_io("docker compose exec #{workdir}#{service} #{command}")
+      run_via_pty("docker compose exec #{workdir}#{service} #{command}")
     end
 
     desc "terminal", "Run a shell in the container"
@@ -117,27 +117,6 @@ module JadeSystemsToolbox
     end
 
     private
-
-    # https://nickcharlton.net/posts/ruby-subprocesses-with-stdout-stderr-streams.html
-    def command_with_io(command)
-      Open3.popen3(command) do |child_stdin, child_stdout, child_stderr, thread|
-        { :out => child_stdout, :err => child_stderr }.each do |key, stream|
-          Thread.new do
-            until (raw_line = stream.gets).nil? do
-              puts raw_line
-            end
-          end
-        end
-
-        Thread.new do
-          until (raw_line = $stdin.gets).nil? do
-            child_stdin.puts raw_line
-          end
-        end
-
-        thread.join # don't exit until the external process is done
-      end
-    end
 
     def compose_yaml = @compose_yaml ||= YAML.load_file(options[:compose_file])
 
@@ -176,48 +155,39 @@ module JadeSystemsToolbox
       end
     end
 
+    # A variation with popen was here:
+    # https://nickcharlton.net/posts/ruby-subprocesses-with-stdout-stderr-streams.html
+    # This implementation inspired by the docs:
+    # https://docs.ruby-lang.org/en/3.4/PTY.html#method-c-spawn
     def run_via_pty(command)
-      PTY.spawn(command) do |child_stdout_stderr, child_stdin, pid|
-        threads = [
-          Thread.new do
-            $stdout.raw do |stdout|
-              until (c = child_stdout_stderr.getc).nil? do # PTY.check(pid, false) ||
-                stdout.putc c
-              end
+      child_stdout_stderr, child_stdin, pid = PTY.spawn(command)
+      puts "PID: #{pid}" if options[:verbose]
+      io_threads = [
+        me = Thread.new do
+          $stdout.raw do |stdout|
+            until (c = child_stdout_stderr.getc).nil? do
+              stdout.putc c
             end
-          rescue IOError => exception
-            puts "IOError rescue"
-            puts exception.message if options[:verbose]
-            # Ignore IOErrors?
-          rescue Errno::EIO => exception
-            puts "Errno::EIO rescue from receiver"
-            puts exception.message if options[:verbose]
-            # raise
-          ensure
-            puts "Leaving thread that receives from child"
-          end,
-          Thread.new do
-            until (c = $stdin.getc).nil? do # PTY.check(pid, false) ||
-              child_stdin.putc c
-            end
-          rescue Errno::EIO => exception
-            puts "Errno::EIO rescue from sender"
-            puts exception.message if options[:verbose]
-            # raise
-          ensure
-            puts "Leaving thread that sends to child"
-          end,
-        ]
-        threads.each { _1.join }
-      ensure
-        puts "FINAL ENSURE"
-        debugger
-        threads.each { _1.join }
-        puts "Threads are joined"
-        child_stdout_stderr.close
-        child_stdin.close
-        Process.wait(pid)
-      end
+          end
+        rescue Errno::EIO => exception
+          puts exception.message if options[:verbose]
+          me.terminate
+        end,
+        me = Thread.new do
+          until (c = $stdin.getc).nil? do
+            child_stdin.putc c
+          end
+        rescue Errno::EIO => exception
+          puts exception.message if options[:verbose]
+          me.terminate
+        end,
+      ]
+      io_threads.each { _1.join }
+    ensure
+      io_threads.each { _1.terminate if _1.alive? }
+      child_stdout_stderr.close
+      child_stdin.close
+      Process.wait(pid)
     end
   end
 end
