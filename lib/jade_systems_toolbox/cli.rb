@@ -10,7 +10,6 @@ module JadeSystemsToolbox
     map "-h" => :help
     map "--help" => :help
 
-    class_option :compose_file, default: "compose.yml"
     class_option :verbose, type: :boolean, default: false, aliases: "-v"
 
     desc "down", "docker compose down"
@@ -23,6 +22,7 @@ module JadeSystemsToolbox
       `devcontainer open`
     end
 
+    option :compose_file, default: "compose.yml"
     option :database, default: "sqlite", aliases: "-d"
     option :ruby_version, default: "3.4", aliases: "-r"
     option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
@@ -32,6 +32,7 @@ module JadeSystemsToolbox
       invoke :initialize_vscode, [], {}
     end
 
+    option :compose_file, default: "compose.yml"
     option :database, default: "sqlite", aliases: "-d"
     option :ruby_version, default: "3.4", aliases: "-r"
     option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
