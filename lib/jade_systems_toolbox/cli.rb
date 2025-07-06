@@ -17,26 +17,26 @@ module JadeSystemsToolbox
       `docker compose down`
     end
 
-    desc "edit", "devcontainer edit"
+    desc "edit", "devcontainer open"
     def edit
       `devcontainer open`
     end
 
+    desc "init", "Initialize compose files and devcontainer.json"
     option :compose_file, default: "compose.yml"
     option :database, default: "sqlite", aliases: "-d"
     option :ruby_version, default: "3.4", aliases: "-r"
     option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
-    desc "init", "Initialize compose files and devcontainer.json"
     def init
       invoke :initialize_docker
       invoke :initialize_vscode, [], {}
     end
 
+    desc "initialize_docker", "Initialize compose files"
     option :compose_file, default: "compose.yml"
     option :database, default: "sqlite", aliases: "-d"
     option :ruby_version, default: "3.4", aliases: "-r"
     option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
-    desc "initialize_docker", "Initialize compose files"
     def initialize_docker
       get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-sqlite/compose.yml") do |file_contents|
         file_contents.gsub!(
@@ -59,11 +59,11 @@ module JadeSystemsToolbox
       end
     end
 
+    desc "open", "Open a page on the services's first port"
     option :service, default: "web"
     option :path, default: "/"
     option :container_port, default: 3000, type: :numeric
     option :protocol, default: "http"
-    desc "open", "Open a page on the SERVICE's PORT"
     def open
       service = options[:service]
       path = options[:path]
