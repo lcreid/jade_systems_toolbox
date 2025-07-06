@@ -108,7 +108,7 @@ module JadeSystemsToolbox
     option :service, default: "web"
     def terminal
       service = options[:service]
-      command_with_io("docker compose exec #{service} '/bin/bash'")
+      run_via_pty("docker compose exec -it #{service} '/bin/bash'")
     end
 
     desc "up", "docker compose up -d"
@@ -173,6 +173,50 @@ module JadeSystemsToolbox
       else
         output = `docker compose port #{service} #{container_port}`
         output.match(/[0-9]+$/)
+      end
+    end
+
+    def run_via_pty(command)
+      PTY.spawn(command) do |child_stdout_stderr, child_stdin, pid|
+        threads = [
+          Thread.new do
+            $stdout.raw do |stdout|
+              until (c = child_stdout_stderr.getc).nil? do # PTY.check(pid, false) ||
+                stdout.putc c
+              end
+            end
+          rescue IOError => exception
+            puts "IOError rescue"
+            puts exception.message if options[:verbose]
+            # Ignore IOErrors?
+          rescue Errno::EIO => exception
+            puts "Errno::EIO rescue from receiver"
+            puts exception.message if options[:verbose]
+            # raise
+          ensure
+            puts "Leaving thread that receives from child"
+          end,
+          Thread.new do
+            until (c = $stdin.getc).nil? do # PTY.check(pid, false) ||
+              child_stdin.putc c
+            end
+          rescue Errno::EIO => exception
+            puts "Errno::EIO rescue from sender"
+            puts exception.message if options[:verbose]
+            # raise
+          ensure
+            puts "Leaving thread that sends to child"
+          end,
+        ]
+        threads.each { _1.join }
+      ensure
+        puts "FINAL ENSURE"
+        debugger
+        threads.each { _1.join }
+        puts "Threads are joined"
+        child_stdout_stderr.close
+        child_stdin.close
+        Process.wait(pid)
       end
     end
   end
