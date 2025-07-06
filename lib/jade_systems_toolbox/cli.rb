@@ -83,6 +83,7 @@ module JadeSystemsToolbox
     end
 
     desc "ports", "Get the host ports for the container ports defined in `compose.yml`"
+    option :compose_file, default: "compose.yml"
     def ports
       services = compose_yaml["services"]
       service_ports = services.map { |service, attributes| [service, attributes&.[]("ports")] }.to_h
@@ -118,7 +119,7 @@ module JadeSystemsToolbox
 
     private
 
-    def compose_yaml = @compose_yaml ||= YAML.load_file(options[:compose_file])
+    def compose_yaml = @compose_yaml ||= YAML.load_file(options[:compose_file] || "compose.yml")
 
     def get_and_save_file(url)
       file_name = Pathname.new(url).basename.to_s
