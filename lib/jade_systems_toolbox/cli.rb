@@ -95,9 +95,12 @@ module JadeSystemsToolbox
 
     desc "server [COMMAND]", "Run the server in the container"
     option :service, default: "web"
+    option :work_dir, aliases: "-w"
     def server(command = "bin/dev")
       service = options[:service]
-      command_with_io("docker compose exec #{service} #{command}")
+      workdir = "-w #{options[:work_dir]} " unless options[:work_dir].nil?
+      puts("docker compose exec #{workdir}#{service} #{command}")
+      command_with_io("docker compose exec #{workdir}#{service} #{command}")
     end
 
     desc "terminal", "Run a shell in the container"
