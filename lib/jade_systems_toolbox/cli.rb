@@ -54,9 +54,9 @@ module JadeSystemsToolbox
 
     desc "initilaize_vscode", "Initialize devcontainer.json for vscode"
     def initialize_vscode
-      # TODO: .devcontainer.json has compose.override.yml listed in it, but maybe we don't have it
-      # for all O/Ss?
-      get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/.devcontainer.json")
+      get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/.devcontainer.json") do |file_contents|
+        file_contents.gsub!(/, "compose.override.yml"/, "") unless Gem::Platform.local.os == "linux"
+      end
     end
 
     option :service, default: "web"
