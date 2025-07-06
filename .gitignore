@@ -19,3 +19,5 @@ compose.override.yml
 compose.yml
 
 *.gem
+vendor/bundle
+.bash_history
