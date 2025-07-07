@@ -1,6 +1,6 @@
 # Jade Systems' Toolbox
 
-This gem install a program to help do container-based development. It provides functions to:
+This gem installs a program to help do container-based development. It provides functions to:
 
 * Prepare a directory for development in containers.
 * Bring up the container(s).
@@ -76,10 +76,14 @@ The default intialization command is:
 tool init
 ```
 
-The default initialization installs a `compose.yml` file for Rails development with a SQLite database, using Ruby 3.4, and the `bookworm` version of Debian.
-(On Linux, it also installs a `compose.override.yml` file.) It also installs a `.devcontainer.json` file, so VScode can edit without the context of the container.
+The initialization installs
 
-To choose another database:
+* A `compose.yml` file for Rails development with a SQLite database, using Ruby 3.4, and the `bookworm` version of Debian.
+* On Linux, a `compose.override.yml` file.
+* A `.devcontainer.json` file, so VScode can edit without the context of the container.
+* `.vscode/settings.json` and `vscode/extensions.json` so developers have a consistent experience in VScode (mostly linting and autoformatting).
+
+You can change some of the defaults. To choose another database:
 
 ```bash
 tool init --database postgres
@@ -166,7 +170,7 @@ tool open --service monitor
 If you want to connect to a path other than `/`:
 
 ```bash
-tool open --path /letter_opener
+tool open --path letter_opener
 ```
 
 #### Bring Down the Containers

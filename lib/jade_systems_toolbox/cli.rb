@@ -57,6 +57,12 @@ module JadeSystemsToolbox
       get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/.devcontainer.json") do |file_contents|
         file_contents.gsub!(/, "compose.override.yml"/, "") unless Gem::Platform.local.os == "linux"
       end
+
+      Dir.mkdir(".vscode") unless Dir.exist?(".vscode")
+      [
+        "https://github.com/lcreid/jade_systems_toolbox/raw/refs/heads/main/templates/extensions.json",
+        "https://github.com/lcreid/jade_systems_toolbox/raw/refs/heads/main/templates/settings.json"
+      ].each { get_and_save_file(_1, target_directory: File.join(".", ".vscode")) }
     end
 
     desc "open", "Open a page on the services's first port"
@@ -122,10 +128,11 @@ module JadeSystemsToolbox
 
     def compose_yaml = @compose_yaml ||= YAML.load_file(options[:compose_file] || "compose.yml")
 
-    def get_and_save_file(url)
-      file_name = Pathname.new(url).basename.to_s
-      file_contents = get_file_from_internet(url: )
+    def get_and_save_file(url, target_directory: nil)
+      file_contents = get_file_from_internet(url:)
       yield file_contents if block_given?
+      file_name = Pathname.new(url).basename.to_s
+      file_name = Pathname.new(target_directory) + file_name unless target_directory.nil?
       File.write(file_name, file_contents)
     end
 
