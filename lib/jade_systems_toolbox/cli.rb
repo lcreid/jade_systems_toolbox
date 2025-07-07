@@ -39,13 +39,13 @@ module JadeSystemsToolbox
     option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
     def initialize_docker
       get_and_save_file(
-        "https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-sqlite/compose.yml"
+        "https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-sqlite/compose.yml",
       ) do |file_contents|
         file_contents.gsub!(
           /jade:rails-app-[0-9]+\.[0-9]+-\w+-\w+$/,
           "jade:rails-app-#{options[:ruby_version] || "3.4"}" \
             "-#{options[:database] || "sqlite"}" \
-            "-#{options[:distro_version] || bookworm}"
+            "-#{options[:distro_version] || bookworm}",
         )
       end
 
@@ -66,7 +66,7 @@ module JadeSystemsToolbox
       Dir.mkdir(".vscode") unless Dir.exist?(".vscode")
       [
         "https://github.com/lcreid/jade_systems_toolbox/raw/refs/heads/main/templates/extensions.json",
-        "https://github.com/lcreid/jade_systems_toolbox/raw/refs/heads/main/templates/settings.json"
+        "https://github.com/lcreid/jade_systems_toolbox/raw/refs/heads/main/templates/settings.json",
       ].each { get_and_save_file(_1, target_directory: File.join(".", ".vscode")) }
     end
 
@@ -194,7 +194,7 @@ module JadeSystemsToolbox
         rescue Errno::EIO => e
           puts e.message if options[:verbose]
           me.terminate
-        end
+        end,
       ]
       io_threads.each(&:join)
     ensure
