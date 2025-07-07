@@ -2,14 +2,16 @@
 
 This gem installs a program to help do container-based development. It provides functions to:
 
-* Prepare a directory for development in containers.
+* Prepare a directory for development in containers, including some files to configure VScode.
 * Bring up the container(s).
 * Open VScode on the code in the container.
-* Open a browser window on the application under development's web server.
+* Open a browser window on the application-under-development's web server.
 * Open a terminal session on the application container.
 * Show mapping of container ports to the ports on your host (laptop, development machine).
 
 [At the moment, this gem has been tested on Ubuntu. In theory, it will do the job for Windows, Macos, and Linux. Feel free to raise issues if it doesn't.]
+
+One of many things this gem _doesn't_ do is impose a Ruby code style on you. The recommended extensions installed by the `init` command include formatting and linting using RuboCop, but you'll get the default RuboCop rules, or the rules from whatever other RuboCop gem you might use (e.g. https://github.com/rails/rubocop-rails-omakase, or https://github.com/standardrb/standard).
 
 ## Installation
 
