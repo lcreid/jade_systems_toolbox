@@ -5,8 +5,8 @@ require_relative "lib/jade_systems_toolbox/version"
 Gem::Specification.new do |spec|
   spec.name = "jade_systems_toolbox"
   spec.version = JadeSystemsToolbox::VERSION
-  spec.authors = ["Larry Reid"]
-  spec.email = ["lcreid@jadesystems.ca"]
+  spec.authors = [ "Larry Reid" ]
+  spec.email = [ "lcreid@jadesystems.ca" ]
 
   spec.summary = "A collection of command line commands to support development."
   spec.homepage = "https://github.com/lcreid/jade_systems_toolbox"
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   end
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = [ "lib" ]
 
   spec.add_dependency "open3", "~> 0.1"
   spec.add_dependency "pathname", "~> 0.2"

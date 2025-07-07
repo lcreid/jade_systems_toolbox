@@ -38,10 +38,15 @@ module JadeSystemsToolbox
     option :ruby_version, default: "3.4", aliases: "-r"
     option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
     def initialize_docker
-      get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-sqlite/compose.yml") do |file_contents|
+      get_and_save_file(
+        "https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-sqlite/compose.yml"
+      ) do |file_contents|
         file_contents.gsub!(
           /jade:rails-app-[0-9]+\.[0-9]+-\w+-\w+$/,
-          "jade:rails-app-#{options[:ruby_version] || '3.4'}-#{options[:database] || "sqlite"}-#{options[:distro_version] || bookworm}")
+          "jade:rails-app-#{options[:ruby_version] || "3.4"}" \
+            "-#{options[:database] || "sqlite"}" \
+            "-#{options[:distro_version] || bookworm}"
+        )
       end
 
       case Gem::Platform.local.os
@@ -78,7 +83,7 @@ module JadeSystemsToolbox
 
       container_ports = compose_yaml.dig("services", "service", "ports")
       container_port = container_ports&.[](0) || container_port
-      path = "/" + path if path[0] != "/"
+      path = "/#{path}" if path[0] != "/"
       `open "#{protocol}://localhost:#{host_port_from_container_port(service:, container_port:)}#{path}"`
     end
 
@@ -93,7 +98,7 @@ module JadeSystemsToolbox
     option :compose_file, default: "compose.yml"
     def ports
       services = compose_yaml["services"]
-      service_ports = services.map { |service, attributes| [service, attributes&.[]("ports")] }.to_h
+      service_ports = services.transform_values { |attributes| attributes&.[]("ports") }
 
       service_ports.each do |service, ports|
         ports&.each do |container_port|
@@ -136,7 +141,7 @@ module JadeSystemsToolbox
       File.write(file_name, file_contents)
     end
 
-    def get_file_from_internet(redirects: 10, url:)
+    def get_file_from_internet(url:, redirects: 10)
       raise Errorl.new("Too many redirects", options[:verbose]) if redirects.zero?
 
       uri = URI.parse(url)
@@ -148,13 +153,13 @@ module JadeSystemsToolbox
       when Net::HTTPSuccess
         response.body
       when Net::HTTPRedirection
-        get_file_from_internet(redirects: redirects - 1, url: response['location'])
+        get_file_from_internet(redirects: redirects - 1, url: response["location"])
       else
         response.error!
       end
     end
 
-    def host_port_from_container_port(service: "web", container_port:)
+    def host_port_from_container_port(container_port:, service: "web")
       ports = container_port.to_s.match(/([0-9]+:){0,1}([0-9]+$)/)
       if !ports[1].nil?
         ports[2].to_s
@@ -174,24 +179,24 @@ module JadeSystemsToolbox
       io_threads = [
         me = Thread.new do
           $stdout.raw do |stdout|
-            until (c = child_stdout_stderr.getc).nil? do
+            until (c = child_stdout_stderr.getc).nil?
               stdout.putc c
             end
           end
-        rescue Errno::EIO => exception
-          puts exception.message if options[:verbose]
+        rescue Errno::EIO => e
+          puts e.message if options[:verbose]
           me.terminate
         end,
         me = Thread.new do
-          until (c = $stdin.getc).nil? do
+          until (c = $stdin.getc).nil?
             child_stdin.putc c
           end
-        rescue Errno::EIO => exception
-          puts exception.message if options[:verbose]
+        rescue Errno::EIO => e
+          puts e.message if options[:verbose]
           me.terminate
-        end,
+        end
       ]
-      io_threads.each { _1.join }
+      io_threads.each(&:join)
     ensure
       io_threads.each { _1.terminate if _1.alive? }
       child_stdout_stderr.close
