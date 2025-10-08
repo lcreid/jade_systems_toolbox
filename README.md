@@ -197,7 +197,7 @@ To run in another directory, use the path name from the directory you're in, to 
 ruby -I ../jade_systems_toolbox/lib ../jade_systems_toolbox/exe/tool [COMMAND]
 ```
 
-To install this gem onto your local machine, build it: `gem build jade_systems_toolbox.gemspec`, and install it: `gem install -l jade_systems_toolbox-0.1.0.gem`. (Change the version number to match the current version number.)
+To install this gem onto your local machine, build it: `gem build jade_systems_toolbox.gemspec`, and install it: `gem install -l jade_systems_toolbox-0.1.1.gem`. (Change the version number to match the current version number.)
 
 ## Release
 
