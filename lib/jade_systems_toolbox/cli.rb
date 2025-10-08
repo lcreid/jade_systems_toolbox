@@ -14,7 +14,7 @@ module JadeSystemsToolbox
 
     desc "down", "docker compose down"
     def down
-      `docker compose down`
+      system("docker compose down")
     end
 
     desc "edit", "devcontainer open"
@@ -57,7 +57,7 @@ module JadeSystemsToolbox
       end
     end
 
-    desc "initilaize_vscode", "Initialize devcontainer.json for vscode"
+    desc "initilize_vscode", "Initialize devcontainer.json for vscode"
     def initialize_vscode
       get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/.devcontainer.json") do |file_contents|
         file_contents.gsub!(/, "compose.override.yml"/, "") unless Gem::Platform.local.os == "linux"
@@ -113,20 +113,19 @@ module JadeSystemsToolbox
     def server(command = "bin/dev")
       service = options[:service]
       workdir = "-w #{options[:work_dir]} " unless options[:work_dir].nil?
-      puts("docker compose exec #{workdir}#{service} #{command}")
-      run_via_pty("docker compose exec #{workdir}#{service} #{command}")
+      system("docker compose exec #{workdir}#{service} #{command}")
     end
 
     desc "terminal", "Run a shell in the container"
     option :service, default: "web"
     def terminal
       service = options[:service]
-      run_via_pty("docker compose exec -it #{service} '/bin/bash'")
+      system("docker compose exec -it #{service} '/bin/bash'")
     end
 
     desc "up", "docker compose up -d"
     def up
-      `docker compose up -d`
+      system("docker compose up -d")
     end
 
     private
@@ -146,8 +145,8 @@ module JadeSystemsToolbox
 
       uri = URI.parse(url)
       request = Net::HTTP.new(uri.host, uri.port)
-      request.use_ssl = true
       response = request.get(uri.path)
+      request.use_ssl = true
 
       case response
       when Net::HTTPSuccess
@@ -167,41 +166,6 @@ module JadeSystemsToolbox
         output = `docker compose port #{service} #{container_port}`
         output.match(/[0-9]+$/)
       end
-    end
-
-    # A variation with popen was here:
-    # https://nickcharlton.net/posts/ruby-subprocesses-with-stdout-stderr-streams.html
-    # This implementation inspired by the docs:
-    # https://docs.ruby-lang.org/en/3.4/PTY.html#method-c-spawn
-    def run_via_pty(command)
-      child_stdout_stderr, child_stdin, pid = PTY.spawn(command)
-      puts "PID: #{pid}" if options[:verbose]
-      io_threads = [
-        me = Thread.new do
-          $stdout.raw do |stdout|
-            until (c = child_stdout_stderr.getc).nil?
-              stdout.putc c
-            end
-          end
-        rescue Errno::EIO => e
-          puts e.message if options[:verbose]
-          me.terminate
-        end,
-        me = Thread.new do
-          until (c = $stdin.getc).nil?
-            child_stdin.putc c
-          end
-        rescue Errno::EIO => e
-          puts e.message if options[:verbose]
-          me.terminate
-        end,
-      ]
-      io_threads.each(&:join)
-    ensure
-      io_threads.each { _1.terminate if _1.alive? }
-      child_stdout_stderr.close
-      child_stdin.close
-      Process.wait(pid)
     end
   end
 end
