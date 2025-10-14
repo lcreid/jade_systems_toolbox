@@ -128,6 +128,11 @@ module JadeSystemsToolbox
       system("docker compose up -d")
     end
 
+    desc "version", "Show the version number of the tool."
+    def version
+      puts JadeSystemsToolbox::VERSION
+    end
+
     private
 
     def compose_yaml = @compose_yaml ||= YAML.load_file(options[:compose_file] || "compose.yml")

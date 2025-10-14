@@ -30,17 +30,18 @@ gem install --user-install jade_systems_toolbox
 ```
 Commands:
   tool down                   # docker compose down
-  tool edit                   # devcontainer edit
+  tool edit                   # devcontainer open
   tool help [COMMAND]         # Describe available commands or one specific command
   tool init                   # Initialize compose files and devcontainer.json
   tool initialize_docker      # Initialize compose files
-  tool initilaize_vscode      # Initialize devcontainer.json for vscode
-  tool open                   # Open a page on the services's port
-  tool port [CONTAINER_PORT]  # Get the host port for the services's CONTAINER_PORT
+  tool initialize_vscode      # Initialize devcontainer.json for vscode
+  tool open                   # Open a page on the services's first port
+  tool port [CONTAINER_PORT]  # Get the host port for the CONTAINER_PORT's container port CONTAINER_PORT
   tool ports                  # Get the host ports for the container ports defined in `compose.yml`
   tool server [COMMAND]       # Run the server in the container
   tool terminal               # Run a shell in the container
   tool up                     # docker compose up -d
+  tool version                # Show the version number of the tool.
 
 Options:
   -v, [--verbose], [--no-verbose], [--skip-verbose]
