@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module JadeSystemsToolbox
   class Cli < Thor
     # This and other improvements from Matt: https://mattbrictson.com/blog/fixing-thor-cli-behavior

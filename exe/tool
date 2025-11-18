@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # To debug without installing, run as `ruby -I lib exe/tool...`
 require "jade_systems_toolbox"

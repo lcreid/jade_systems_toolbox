@@ -26,3 +26,8 @@ Style/TrailingCommaInArrayLiteral:
 
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always # or 'always' or 'never' depending on your preference
+  SafeAutoCorrect: true # Set to true for safe autocorrection, false if you need to review changes
