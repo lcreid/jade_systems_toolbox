@@ -2,9 +2,7 @@
 
 require "debug"
 require "net/http"
-require "open3"
 require "pathname"
-require "pty"
 require "thor"
 require "yaml"
 
