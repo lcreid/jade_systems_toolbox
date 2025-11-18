@@ -152,8 +152,8 @@ module JadeSystemsToolbox
 
       uri = URI.parse(url)
       request = Net::HTTP.new(uri.host, uri.port)
-      response = request.get(uri.path)
       request.use_ssl = true
+      response = request.get(uri.path)
 
       case response
       when Net::HTTPSuccess
