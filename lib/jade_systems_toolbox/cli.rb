@@ -47,7 +47,7 @@ module JadeSystemsToolbox
           /jade:rails-app-[0-9]+\.[0-9]+-\w+-\w+$/,
           "jade:rails-app-#{options[:ruby_version] || "3.4"}" \
             "-#{options[:database] || "sqlite"}" \
-            "-#{options[:distro_version] || bookworm}",
+            "-#{options[:distro_version] || "bookworm"}",
         )
       end
 
