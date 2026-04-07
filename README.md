@@ -27,18 +27,19 @@ gem install --user-install jade_systems_toolbox
 
 ### Summary
 
-```
+```terminal
 Commands:
-  tool down                   # docker compose down
+  tool down                   # docker compose down. Deletes the container. You probably want stop.
   tool edit                   # devcontainer open
   tool help [COMMAND]         # Describe available commands or one specific command
   tool init                   # Initialize compose files and devcontainer.json
   tool initialize_docker      # Initialize compose files
-  tool initialize_vscode      # Initialize devcontainer.json for vscode
+  tool initilize_vscode       # Initialize devcontainer.json for vscode
   tool open                   # Open a page on the services's first port
   tool port [CONTAINER_PORT]  # Get the host port for the CONTAINER_PORT's container port CONTAINER_PORT
   tool ports                  # Get the host ports for the container ports defined in `compose.yml`
   tool server [COMMAND]       # Run the server in the container
+  tool stop                   # Stop the service(s) but preserve the container(s)
   tool terminal               # Run a shell in the container
   tool up                     # docker compose up -d
   tool version                # Show the version number of the tool.
@@ -60,7 +61,8 @@ The broad steps to start a brand new project are:
 1. Run the editor and otherwise do what you need to do to create your project.
 1. When the web server is ready to run (if you're developing a web app), run the server.
 1. Open a browser window to the web server.
-1. When you're done, bring down the containers.
+1. When you're done, stop the containers.
+1. If you need to delete the containers, down tools.
 
 To start:
 
@@ -176,10 +178,24 @@ If you want to connect to a path other than `/`:
 tool open --path letter_opener
 ```
 
+#### Stop the Containers
+
+```bash
+tool stop
+```
+
 #### Bring Down the Containers
+
+This destroys the containers, which will likely destroy all your gems.
 
 ```bash
 tool down
+```
+
+Skip the confirmation mesage with:
+
+```bash
+tool down --force
 ```
 
 ## Development
@@ -192,13 +208,13 @@ To test locally without installing, run the executable like this:
 ruby -I lib exe/tool [COMMAND]
 ```
 
-To run in another directory, use the path name from the directory you're in, to the directory where you checked out the gem's code, for example:
+To run in another directory, use the path from the directory you're in, to the directory where you checked out the gem's code. For example:
 
 ```bash
 ruby -I ../jade_systems_toolbox/lib ../jade_systems_toolbox/exe/tool [COMMAND]
 ```
 
-To install this gem onto your local machine, build it: `gem build jade_systems_toolbox.gemspec`, and install it: `gem install -l jade_systems_toolbox-0.1.2.gem`. (Change the version number to match the current version number.)
+To install this gem onto your local machine, build it: `gem build jade_systems_toolbox.gemspec`, and install it: `gem install -l jade_systems_toolbox-0.1.4.gem`. (Change the version number to match the current version number.)
 
 ## Release
 

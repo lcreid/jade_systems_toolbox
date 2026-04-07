@@ -14,8 +14,12 @@ module JadeSystemsToolbox
 
     class_option :verbose, type: :boolean, default: false, aliases: "-v"
 
-    desc "down", "docker compose down"
+    desc "down", "docker compose down. Deletes the container. You probably want stop."
+    option :force, default: "n", aliases: "-f"
     def down
+      force = ask("tool down destroys the containers. Are you sure?").downcase unless options[:force] == "y"
+      exit(1) if force[0] != "y"
+
       system("docker compose down")
     end
 
@@ -116,6 +120,11 @@ module JadeSystemsToolbox
       service = options[:service]
       workdir = "-w #{options[:work_dir]} " unless options[:work_dir].nil?
       system("docker compose exec #{workdir}#{service} #{command}")
+    end
+
+    desc "stop", "Stop the service(s) but preserve the container(s)"
+    def stop
+      system("docker compose stop")
     end
 
     desc "terminal", "Run a shell in the container"
