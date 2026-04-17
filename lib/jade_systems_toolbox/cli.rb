@@ -114,12 +114,24 @@ module JadeSystemsToolbox
     end
 
     desc "server [COMMAND]", "Run the server in the container"
+    option :env, repeatable: true, default: [], aliases: "-e", banner: "VAR=value"
+    option :mapping, type: :boolean, default: true, aliases: "-m"
     option :service, default: "web"
     option :work_dir, aliases: "-w"
     def server(command = "bin/dev")
       service = options[:service]
       workdir = "-w #{options[:work_dir]} " unless options[:work_dir].nil?
-      system("docker compose exec #{workdir}#{service} #{command}")
+      environment_variables = options[:env].map { "-e #{_1}" }.join(" ")
+      port_map_environment_variables = port_map_for_environment(service) if options[:mapping]
+      compose_command = [
+        "docker compose exec",
+        environment_variables,
+        port_map_environment_variables,
+        workdir,
+        service,
+        command,
+      ].compact.join(" ")
+      system(compose_command)
     end
 
     desc "stop", "Stop the service(s) but preserve the container(s)"
@@ -128,10 +140,22 @@ module JadeSystemsToolbox
     end
 
     desc "terminal", "Run a shell in the container"
+    option :env, repeatable: true, default: [], aliases: "-e", banner: "VAR=value"
+    option :mapping, type: :boolean, default: true, aliases: "-m"
     option :service, default: "web"
     def terminal
       service = options[:service]
-      system("docker compose exec -it #{service} '/bin/bash'")
+      environment_variables = options[:env].map { "-e #{_1}" }.join(" ")
+      port_map_environment_variables = port_map_for_environment(service) if options[:mapping]
+      command = [
+        "docker compose exec",
+        environment_variables,
+        port_map_environment_variables,
+        "-it",
+        service,
+        "'/bin/bash'",
+      ].join(" ")
+      system(command)
     end
 
     desc "up", "docker compose up -d"
@@ -182,6 +206,20 @@ module JadeSystemsToolbox
         output = `docker compose port #{service} #{container_port}`
         output.match(/[0-9]+$/)
       end
+    end
+
+    def port_map(service)
+      service_ports = compose_yaml.dig("services", service, "ports")
+      service_ports&.reduce({}) do |acc, port|
+        acc[port] = host_port_from_container_port(container_port: port, service:).to_s
+        acc
+      end
+    end
+
+    def port_map_for_environment(service)
+      port_map(service).map do |container_port, host_port|
+        "-e HOST_PORT_#{container_port}=#{host_port}"
+      end.join(" ")
     end
   end
 end

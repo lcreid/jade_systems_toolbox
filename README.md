@@ -126,6 +126,14 @@ This connects to the `web` service defined in the `compose.yml` file. If you wan
 tool terminal --service mysql
 ```
 
+Set some environment variables in the container (the `docker compose --env` flag):
+
+```bash
+tool terminal -e RAILS_ENV=test
+```
+
+`tool terminal` supports the `--mapping` argument as described under [Run the Server](run-the-server).
+
 #### Start VScode
 
 ```bash
@@ -136,6 +144,17 @@ tool edit
 
 ```bash
 tool server
+```
+
+Run the server, setting environment variables in the container for the port mapping.
+The container environment will have variables named `HOST_PORT_xxxx`,
+and `xxxx` is the container port (e.g. 3000).
+The _value_ of each environment variable
+is the host's port number that the container port is mapped to.
+
+```bash
+tool server --mapping # or
+tool server -m
 ```
 
 This runs `bin/dev`. To run something else, e.g. a bare Puma so you can debug it:
@@ -151,6 +170,8 @@ tool server --work-dir test/app --service monitor
 ```
 
 To terminate the server, type Control-C.
+
+`tool supports` supports the `--env` argument as described under [Open a Terminal Session](open-a-terminal-session).
 
 #### Open a Browser Window
 
