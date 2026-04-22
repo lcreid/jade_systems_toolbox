@@ -17,7 +17,7 @@ module JadeSystemsToolbox
     desc "down", "docker compose down. Deletes the container. You probably want stop."
     option :force, default: "n", aliases: "-f"
     def down
-      force = ask("tool down destroys the containers. Are you sure?").downcase unless options[:force] == "y"
+      force = ask("tool down destroys the containers. Are you sure [y/N]?").downcase unless options[:force] == "y"
       exit(1) if force[0] != "y"
 
       system("docker compose down")
