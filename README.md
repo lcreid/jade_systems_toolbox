@@ -154,15 +154,16 @@ tool edit
 tool server
 ```
 
-Run the server, setting environment variables in the container for the port mapping.
+By default, the container has environment variables set for port mapping.
 The container environment will have variables named `HOST_PORT_xxxx`,
 and `xxxx` is the container port (e.g. 3000).
 The _value_ of each environment variable
 is the host's port number that the container port is mapped to.
 
+If you don't want the mapping, you can turn it off:
+
 ```bash
-tool server --mapping # or
-tool server -m
+tool server --no-mapping
 ```
 
 This runs `bin/dev`. To run something else, e.g. a bare Puma so you can debug it:
@@ -179,7 +180,7 @@ tool server --work-dir test/app --service monitor
 
 To terminate the server, type Control-C.
 
-`tool supports` supports the `--env` argument as described under [Open a Terminal Session](open-a-terminal-session).
+`tool server` supports the `--env` argument as described under [Open a Terminal Session](open-a-terminal-session).
 
 #### Open a Browser Window
 
