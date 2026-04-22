@@ -45,13 +45,14 @@ module JadeSystemsToolbox
     option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
     def initialize_docker
       get_and_save_file(
-        "https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-sqlite/compose.yml",
+        "https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-#{options[:database]}/#{options[:compose_file]}",
+        target_file_name: "compose.yml",
       ) do |file_contents|
         file_contents.gsub!(
-          /jade:rails-app-[0-9]+\.[0-9]+-\w+-\w+$/,
-          "jade:rails-app-#{options[:ruby_version] || "3.4"}" \
-            "-#{options[:database] || "sqlite"}" \
-            "-#{options[:distro_version] || "bookworm"}",
+          /jade:rails-app-.*$/,
+          "jade:rails-app-#{options[:ruby_version]}" \
+            "-#{options[:database]}" \
+            "-#{options[:distro_version]}",
         )
       end
 
@@ -172,10 +173,10 @@ module JadeSystemsToolbox
 
     def compose_yaml = @compose_yaml ||= YAML.load_file(options[:compose_file] || "compose.yml")
 
-    def get_and_save_file(url, target_directory: nil)
+    def get_and_save_file(url, target_directory: nil, target_file_name: nil)
       file_contents = get_file_from_internet(url:)
       yield file_contents if block_given?
-      file_name = Pathname.new(url).basename.to_s
+      file_name = target_file_name || Pathname.new(url).basename.to_s
       file_name = Pathname.new(target_directory) + file_name unless target_directory.nil?
       File.write(file_name, file_contents)
     end

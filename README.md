@@ -102,9 +102,17 @@ To choose a different ruby version and Debian version:
 tool init --ruby-version 3.2 --distro-version bullseye
 ```
 
+A fairly common variant is to get a `compose.yml` that also has a Selenium container:
+
+```bash
+tool init --compose-file=compose.with-selenium.yml
+```
+
+This retrieves the compose file, and puts it in your local `compose.yml`.
+
 You can choose a currently supported Ruby version, and a Debian version that supports that Ruby version, from the containers built by https://github.com/lcreid/docker.
 
-You're free to modify the `compose.yml` (and `compose.override.yml` on Linux). If you run `tool init` again, it will over-write your changes.
+You're free to modify the `compose.yml` (and `compose.override.yml` on Linux). Note that if you run `tool init` again, it will over-write your changes.
 
 #### Start the Containers
 
