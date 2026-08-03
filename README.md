@@ -102,10 +102,10 @@ To choose a different ruby version and Debian version:
 tool init --ruby-version 3.2 --distro-version bullseye
 ```
 
-A fairly common variant is to get a `compose.yml` that also has a Selenium container:
+A fairly common variant is to get a `compose.yml` that also has a Playwright container:
 
 ```bash
-tool init --compose-file=compose.with-selenium.yml
+tool init --compose-file=compose.with-playwright.yml
 ```
 
 This retrieves the compose file, and puts it in your local `compose.yml`.
