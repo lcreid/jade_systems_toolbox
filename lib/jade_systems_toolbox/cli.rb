@@ -163,6 +163,7 @@ module JadeSystemsToolbox
     def up
       system("docker compose up -d")
     end
+    map "start" => :up
 
     desc "version", "Show the version number of the tool."
     def version
