@@ -8,6 +8,7 @@ require "yaml"
 
 require_relative "jade_systems_toolbox/version"
 require_relative "jade_systems_toolbox/cli"
+require_relative "jade_systems_toolbox/docker_initializer"
 require_relative "jade_systems_toolbox/error_reporter"
 
 module JadeSystemsToolbox
