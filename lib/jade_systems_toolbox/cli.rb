@@ -184,7 +184,7 @@ module JadeSystemsToolbox
     end
 
     def get_file_from_internet(url:, redirects: 10)
-      raise Errorl.new("Too many redirects", options[:verbose]) if redirects.zero?
+      raise Error.new("Too many redirects", options[:verbose]) if redirects.zero?
 
       uri = URI.parse(url)
       request = Net::HTTP.new(uri.host, uri.port)
