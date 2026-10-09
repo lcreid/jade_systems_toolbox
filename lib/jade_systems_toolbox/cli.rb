@@ -29,7 +29,6 @@ module JadeSystemsToolbox
     end
 
     desc "init", "Initialize compose files and devcontainer.json"
-    option :compose_file, default: "compose.yml"
     option :database, default: "sqlite", aliases: "-d"
     option :ruby_version, default: "4.0", aliases: "-r"
     option :distro_version, default: "trixie", aliases: "-t" # For Toy Story.
@@ -39,33 +38,19 @@ module JadeSystemsToolbox
     end
 
     desc "initialize_docker", "Initialize compose files"
-    option :compose_file, default: "compose.yml"
     option :database, default: "sqlite", aliases: "-d"
     option :ruby_version, default: "4.0", aliases: "-r"
     option :distro_version, default: "trixie", aliases: "-t" # For Toy Story.
+    method_option :end_to_end_tool,
+      type: :string,
+      enum: [ "playwright", "selenium" ],
+      desc: "Use an end-to-end (browser) testing tool",
+      aliases: "-e"
     def initialize_docker
-      DockerInitializer.new(**options)
-      get_and_save_file(
-        "https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-#{options[:database]}/#{options[:compose_file]}",
-        target_file_name: "compose.yml",
-      ) do |file_contents|
-        file_contents.gsub!(
-          /jade:rails-app-.*$/,
-          "jade:rails-app-#{options[:ruby_version]}" \
-            "-#{options[:database]}" \
-            "-#{options[:distro_version]}",
-        )
-      end
-
-      case Gem::Platform.local.os
-      when "linux"
-        get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/Linux/compose.override.yml")
-      else
-        raise Error.new("Not implemented for #{Gem::Platform.local.os}", options[:verbose])
-      end
+      DockerInitializer.new(**options.transform_keys(&:to_sym).except(:verbose)).get_and_save_compose_files
     end
 
-    desc "initilize_vscode", "Initialize devcontainer.json for vscode"
+    desc "initialize_vscode", "Initialize devcontainer.json for vscode"
     def initialize_vscode
       get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/.devcontainer.json") do |file_contents|
         file_contents.gsub!(/, "compose.override.yml"/, "") unless Gem::Platform.local.os == "linux"
