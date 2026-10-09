@@ -1,0 +1,11 @@
+services:
+  selenium:
+    image: selenium/standalone-chrome:143.0
+    logging:
+      driver: none
+    stdin_open: true
+    tty: true
+    environment:
+      - LANG=en_CA.UTF-8
+    ports:
+      - "7900"

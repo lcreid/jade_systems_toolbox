@@ -1,0 +1,9 @@
+# Playwright is picky about the image version and the gem version you're using.
+# You probably have to change the image version.
+services:
+  playwright: # this is our PLAYWRIGHT_HOST value
+    image: mcr.microsoft.com/playwright:v1.61.0-noble
+    command: >
+      /bin/sh -c "npx -y playwright@1.61.0 run-server --port 3000 --host 0.0.0.0 --path /ws"
+    init: true
+    restart: unless-stopped
