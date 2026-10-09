@@ -19,6 +19,14 @@ module JadeSystemsToolbox
       assert_equal Pathname("compose-files/rails-app/playwright/compose.yml"), initializer.compose_file_path
     end
 
+    def test_compose_file_url
+      initializer = DockerInitializer.new(database: "none", end_to_end_tool: "playwright")
+      assert_equal(
+        "https://github.com/lcreid/jade_systems_toolbox/raw/refs/heads/main/compose-files/rails-app/playwright/compose.yml",
+        initializer.compose_file_url,
+      )
+    end
+
     Pathname.glob("compose-files/*").reject do
       [
         Pathname("compose-files/Linux"),

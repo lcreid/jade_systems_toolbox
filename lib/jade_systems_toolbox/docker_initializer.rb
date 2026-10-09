@@ -16,6 +16,10 @@ module JadeSystemsToolbox
       Pathname("compose-files").join(*([ base_dir, end_to_end_tool, "compose.yml" ].compact))
     end
 
+    def compose_file_url
+      "https://github.com/lcreid/jade_systems_toolbox/raw/refs/heads/main/" + compose_file_path.to_s
+    end
+
     def get_compose_file
     end
 
