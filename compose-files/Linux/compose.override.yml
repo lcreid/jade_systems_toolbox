@@ -1,0 +1,15 @@
+services:
+  web:
+    group_add:
+      - "140"
+    volumes:
+      - ~/.gitconfig:/home/dev/.gitconfig
+      # - /etc/passwd:/etc/passwd:ro
+      - ~/.gem/credentials:/home/dev/.gem/credentials:ro
+      # $HOME here is your host computer's `~`, e.g. `/home/reid`.
+      # `ssh` explicitly looks for its config in the home directory from `/etc/passwd`,
+      # so the target for this has to look like your home directory on the host.
+      - ~/.ssh:/home/dev/.ssh:ro
+      - ${SSH_AUTH_SOCK}:/ssh-agent
+    environment:
+      - SSH_AUTH_SOCK=/ssh-agent
