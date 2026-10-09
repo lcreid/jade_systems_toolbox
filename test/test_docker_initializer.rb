@@ -15,7 +15,7 @@ module JadeSystemsToolbox
     end
 
     def test_compose_file_path_no_database_with_playwright
-      initializer = DockerInitializer.new(database: "none", browser_tester: "playwright")
+      initializer = DockerInitializer.new(database: "none", end_to_end_tool: "playwright")
       assert_equal Pathname("compose-files/rails-app/playwright/compose.yml"), initializer.compose_file_path
     end
 
@@ -23,7 +23,7 @@ module JadeSystemsToolbox
       [
         Pathname("compose-files/Linux"),
         Pathname("compose-files/databases"),
-        Pathname("compose-files/browser-testers"),
+        Pathname("compose-files/end-to-end-tools"),
       ].include?(_1)
     end.each do |dir|
       define_method "test_ruby_version_in_file_#{dir.basename}" do
@@ -45,10 +45,10 @@ module JadeSystemsToolbox
           assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
         end
 
-        [ "playwright", "selenium" ].each do |browser_tester|
-          define_method "test_browser_tester_#{dir.basename}_#{database}_#{browser_tester}" do
-            initializer = DockerInitializer.new(database:, browser_tester:)
-            expected_regexp = /^    image: .*#{browser_tester}/
+        [ "playwright", "selenium" ].each do |end_to_end_tool|
+          define_method "test_end_to_end_tool_#{dir.basename}_#{database}_#{end_to_end_tool}" do
+            initializer = DockerInitializer.new(database:, end_to_end_tool:)
+            expected_regexp = /^    image: .*#{end_to_end_tool}/
             assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
           end
         end

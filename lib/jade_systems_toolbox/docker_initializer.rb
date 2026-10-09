@@ -2,8 +2,8 @@
 
 module JadeSystemsToolbox
   class DockerInitializer
-    def initialize(compose_file: nil, database: nil, ruby_version: nil, distro_version: nil, browser_tester: nil)
-      @browser_tester = browser_tester&.downcase&.strip
+    def initialize(compose_file: nil, database: nil, ruby_version: nil, distro_version: nil, end_to_end_tool: nil)
+      @end_to_end_tool = end_to_end_tool&.downcase&.strip
       @compose_file = compose_file&.downcase&.strip
       database = database.to_s.downcase.strip
       @database = database unless %w[false none nil ""].include?(database)
@@ -13,7 +13,7 @@ module JadeSystemsToolbox
 
     def compose_file_path
       base_dir = [ "rails-app", database ].compact.join("-")
-      Pathname("compose-files").join(*([ base_dir, browser_tester, "compose.yml" ].compact))
+      Pathname("compose-files").join(*([ base_dir, end_to_end_tool, "compose.yml" ].compact))
     end
 
     def get_compose_file
@@ -27,7 +27,7 @@ module JadeSystemsToolbox
 
     private
 
-    attr_reader :browser_tester
+    attr_reader :end_to_end_tool
     attr_reader :compose_file
     attr_reader :database
     attr_reader :ruby_version
