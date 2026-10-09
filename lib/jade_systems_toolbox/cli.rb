@@ -31,8 +31,8 @@ module JadeSystemsToolbox
     desc "init", "Initialize compose files and devcontainer.json"
     option :compose_file, default: "compose.yml"
     option :database, default: "sqlite", aliases: "-d"
-    option :ruby_version, default: "3.4", aliases: "-r"
-    option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
+    option :ruby_version, default: "4.0", aliases: "-r"
+    option :distro_version, default: "trixie", aliases: "-t" # For Toy Story.
     def init
       invoke :initialize_docker
       invoke :initialize_vscode, [], {}
@@ -41,8 +41,8 @@ module JadeSystemsToolbox
     desc "initialize_docker", "Initialize compose files"
     option :compose_file, default: "compose.yml"
     option :database, default: "sqlite", aliases: "-d"
-    option :ruby_version, default: "3.4", aliases: "-r"
-    option :distro_version, default: "bookworm", aliases: "-t" # For Toy Story.
+    option :ruby_version, default: "4.0", aliases: "-r"
+    option :distro_version, default: "trixie", aliases: "-t" # For Toy Story.
     def initialize_docker
       get_and_save_file(
         "https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-#{options[:database]}/#{options[:compose_file]}",
