@@ -18,6 +18,13 @@ module JadeSystemsToolbox
     def get_compose_file
     end
 
+    def customize_compose_file(base_file)
+      base_file.sub(
+        "    image: lenchoreyes/jade:rails-app-${RUBY_VERSION:-4.0}",
+        "    image: lenchoreyes/jade:rails-app-#{ruby_version}",
+      )
+    end
+
     private
 
     attr_reader :browser_tester
