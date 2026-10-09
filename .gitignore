@@ -16,8 +16,8 @@
 .vscode-server/
 .dotnet/
 Gemfile.lock
-compose.override.yml
-compose.yml
+/compose.override.yml
+/compose.yml
 
 *.gem
 vendor/bundle
