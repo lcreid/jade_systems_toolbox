@@ -19,16 +19,18 @@ module JadeSystemsToolbox
       assert_equal Pathname("compose-files/rails-app/playwright/compose.yml"), initializer.compose_file_path
     end
 
-    def test_ruby_version_in_file
-      initializer = DockerInitializer.new(database: "none", ruby_version: "3.3")
-      expected_regexp = /^    image: lenchoreyes\/jade:rails-app-3\.3-\$\{DISTRO_VERSION:-trixie\}$/
-      assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
-    end
+    Pathname.glob("compose-files/*").reject { _1 == Pathname("compose-files/Linux") }.each do |dir|
+      define_method "test_ruby_version_in_file_#{dir.basename}" do
+        initializer = DockerInitializer.new(database: "none", ruby_version: "3.3")
+        expected_regexp = /^    image: lenchoreyes\/jade:rails-app-3\.3-\$\{DISTRO_VERSION:-trixie\}$/
+        assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
+      end
 
-    def test_distro_version_in_file
-      initializer = DockerInitializer.new(database: "none", distro_version: "bookworm")
-      expected_regexp = /^    image: lenchoreyes\/jade:rails-app-\$\{RUBY_VERSION:-4.0\}-bookworm$/
-      assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
+      define_method "test_distro_version_in_file_#{dir.basename}" do
+        initializer = DockerInitializer.new(database: "none", distro_version: "bookworm")
+        expected_regexp = /^    image: lenchoreyes\/jade:rails-app-\$\{RUBY_VERSION:-4.0\}-bookworm$/
+        assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
+      end
     end
 
     private

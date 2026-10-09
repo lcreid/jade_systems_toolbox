@@ -44,6 +44,7 @@ module JadeSystemsToolbox
     option :ruby_version, default: "4.0", aliases: "-r"
     option :distro_version, default: "trixie", aliases: "-t" # For Toy Story.
     def initialize_docker
+      DockerInitializer.new(**options)
       get_and_save_file(
         "https://github.com/lcreid/docker/raw/refs/heads/main/rails-app-#{options[:database]}/#{options[:compose_file]}",
         target_file_name: "compose.yml",
