@@ -1,6 +1,6 @@
 services:
   web:
-    image: lenchoreyes/jade:ruby-app-${RUBY_VERSION:-4.0}-${DISTRO_VERSION:-${DISTRO_VERSION:-trixie}}
+    image: lenchoreyes/jade:ruby-app-${RUBY_VERSION:-4.0}-${DISTRO_VERSION:-trixie}
     stdin_open: true
     tty: true
     user: "dev:dev"
