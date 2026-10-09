@@ -21,12 +21,14 @@ module JadeSystemsToolbox
 
     def test_ruby_version_in_file
       initializer = DockerInitializer.new(database: "none", ruby_version: "3.3")
-      expected_regexp = /^    image: lenchoreyes\/jade:rails-app-3\.3-trixie$/
+      expected_regexp = /^    image: lenchoreyes\/jade:rails-app-3\.3-\$\{DISTRO_VERSION:-trixie\}$/
       assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
     end
 
     def test_distro_version_in_file
-      skip "TODO"
+      initializer = DockerInitializer.new(database: "none", distro_version: "bookworm")
+      expected_regexp = /^    image: lenchoreyes\/jade:rails-app-\$\{RUBY_VERSION:-4.0\}-bookworm$/
+      assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
     end
 
     private

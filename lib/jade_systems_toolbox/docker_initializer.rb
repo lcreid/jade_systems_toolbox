@@ -19,10 +19,9 @@ module JadeSystemsToolbox
     end
 
     def customize_compose_file(base_file)
-      base_file.sub(
-        "    image: lenchoreyes/jade:rails-app-${RUBY_VERSION:-4.0}",
-        "    image: lenchoreyes/jade:rails-app-#{ruby_version}",
-      )
+      base_file.gsub!("${RUBY_VERSION:-4.0}", ruby_version) unless ruby_version.nil?
+      base_file.gsub!("${DISTRO_VERSION:-trixie}", distro_version) unless distro_version.nil?
+      base_file
     end
 
     private
