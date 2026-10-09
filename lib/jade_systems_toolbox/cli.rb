@@ -161,29 +161,11 @@ module JadeSystemsToolbox
     def compose_yaml = @compose_yaml ||= YAML.load_file(options[:compose_file] || "compose.yml")
 
     def get_and_save_file(url, target_directory: nil, target_file_name: nil)
-      file_contents = get_file_from_internet(url:)
+      file_contents = Http.get_file(url:)
       yield file_contents if block_given?
       file_name = target_file_name || Pathname.new(url).basename.to_s
       file_name = Pathname.new(target_directory) + file_name unless target_directory.nil?
       File.write(file_name, file_contents)
-    end
-
-    def get_file_from_internet(url:, redirects: 10)
-      raise Error.new("Too many redirects", options[:verbose]) if redirects.zero?
-
-      uri = URI.parse(url)
-      request = Net::HTTP.new(uri.host, uri.port)
-      request.use_ssl = true
-      response = request.get(uri.path)
-
-      case response
-      when Net::HTTPSuccess
-        response.body
-      when Net::HTTPRedirection
-        get_file_from_internet(redirects: redirects - 1, url: response["location"])
-      else
-        response.error!
-      end
     end
 
     def host_port_from_container_port(container_port:, service: "web")
