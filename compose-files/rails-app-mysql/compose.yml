@@ -18,10 +18,10 @@ services:
     ports:
       - "3000"
     depends_on:
-      - mysql
+      - db
 
-  mysql:
-    image: mysql:8.4
+  db:
+    image: mysql:latest
     volumes:
       - mysql:/var/lib/mysql
     environment:

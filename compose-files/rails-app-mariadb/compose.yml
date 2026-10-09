@@ -18,10 +18,10 @@ services:
     ports:
       - "3000"
     depends_on:
-      - mariadb
+      - db
 
-  mariadb:
-    image: mariadb:11.2
+  db:
+    image: mariadb:latest
     volumes:
       - mariadb:/var/lib/mysql
     environment:

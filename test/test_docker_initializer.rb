@@ -6,7 +6,7 @@ module JadeSystemsToolbox
   class TestDockerInitializer < Minitest::Test
     def test_compose_file_path
       initializer = DockerInitializer.new(database: "sqlite")
-      assert_equal Pathname("compose-files/rails-app/sqlite/compose.yml"), initializer.compose_file_path
+      assert_equal Pathname("compose-files/rails-app-sqlite/compose.yml"), initializer.compose_file_path
     end
 
     def test_compose_file_path_no_database
@@ -36,6 +36,14 @@ module JadeSystemsToolbox
         initializer = DockerInitializer.new(database: "none", distro_version: "bookworm")
         expected_regexp = /^    image: lenchoreyes\/jade:rails-app-\$\{RUBY_VERSION:-4.0\}-bookworm$/
         assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
+      end
+
+      [ "mariadb", "mysql", "postgres", "sqlite" ].each do |database|
+        define_method "test_database_#{dir.basename}_#{database}" do
+          initializer = DockerInitializer.new(database:)
+          expected_regexp = /^    image: lenchoreyes\/jade:rails-app-.*-#{database}-/
+          assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
+        end
       end
     end
 
