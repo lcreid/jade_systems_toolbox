@@ -19,7 +19,13 @@ module JadeSystemsToolbox
       assert_equal Pathname("compose-files/rails-app/playwright/compose.yml"), initializer.compose_file_path
     end
 
-    Pathname.glob("compose-files/*").reject { _1 == Pathname("compose-files/Linux") }.each do |dir|
+    Pathname.glob("compose-files/*").reject do
+      [
+        Pathname("compose-files/Linux"),
+        Pathname("compose-files/databases"),
+        Pathname("compose-files/browser-testers"),
+      ].include?(_1)
+    end.each do |dir|
       define_method "test_ruby_version_in_file_#{dir.basename}" do
         initializer = DockerInitializer.new(database: "none", ruby_version: "3.3")
         expected_regexp = /^    image: lenchoreyes\/jade:rails-app-3\.3-\$\{DISTRO_VERSION:-trixie\}$/
