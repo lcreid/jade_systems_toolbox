@@ -105,7 +105,7 @@ tool init --ruby-version 3.2 --distro-version bullseye
 A fairly common variant is to get a `compose.yml` that also has a Playwright container:
 
 ```bash
-tool init --compose-file=compose.with-playwright.yml
+tool init --end-to-end-tool playwright
 ```
 
 This retrieves the compose file, and puts it in your local `compose.yml`.
