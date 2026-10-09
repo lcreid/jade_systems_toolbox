@@ -44,6 +44,14 @@ module JadeSystemsToolbox
           expected_regexp = /^    image: lenchoreyes\/jade:rails-app-.*-#{database}-/
           assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
         end
+
+        [ "playwright", "selenium" ].each do |browser_tester|
+          define_method "test_browser_tester_#{dir.basename}_#{database}_#{browser_tester}" do
+            initializer = DockerInitializer.new(database:, browser_tester:)
+            expected_regexp = /^    image: .*#{browser_tester}/
+            assert_match expected_regexp, initializer.customize_compose_file(test_compose_file(initializer))
+          end
+        end
       end
     end
 
