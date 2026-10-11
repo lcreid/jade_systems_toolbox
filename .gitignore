@@ -8,7 +8,7 @@
 /tmp/
 
 .cache/
-.devcontainer.json
+/.devcontainer.json
 .gem/
 .gitconfig
 .gnupg/
