@@ -74,7 +74,7 @@ module JadeSystemsToolbox
       container_port = options[:container_port]
       protocol = options[:protocol]
 
-      container_ports = compose_yaml.dig("services", "service", "ports")
+      container_ports = compose_yaml.dig("services", service, "ports")
       container_port = container_ports&.[](0) || container_port
       path = "/#{path}" if path[0] != "/"
       `open "#{protocol}://localhost:#{host_port_from_container_port(service:, container_port:)}#{path}"`
