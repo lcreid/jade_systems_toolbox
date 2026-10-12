@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "debug"
 require "net/http"
 require "pathname"
 require "thor"
