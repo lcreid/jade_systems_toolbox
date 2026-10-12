@@ -66,5 +66,6 @@
   "files.trimTrailingWhitespace": true,
   "[sql]": {
     "editor.defaultFormatter": "adpyke.vscode-sql-formatter"
-  }
+  },
+  "window.title": "jade_systems_toolbox"
 }
