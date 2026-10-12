@@ -52,18 +52,13 @@ module JadeSystemsToolbox
 
     desc "initialize_vscode", "Initialize devcontainer.json for vscode"
     def initialize_vscode
-      get_and_save_file("https://github.com/lcreid/docker/raw/refs/heads/main/.devcontainer.json") do |file_contents|
-        file_contents.gsub!(/, "compose.override.yml"/, "") unless Gem::Platform.local.os == "linux"
-      end
-
-      Dir.mkdir(".vscode") unless Dir.exist?(".vscode")
-      [
-        "https://github.com/lcreid/jade_systems_toolbox/raw/refs/heads/main/templates/extensions.json",
-        "https://github.com/lcreid/jade_systems_toolbox/raw/refs/heads/main/templates/settings.json",
-      ].each { get_and_save_file(_1, target_directory: File.join(".", ".vscode")) }
+      initializer = Vscode.new
+      initializer.write_devcontainer_json
+      initializer.write_extensions_json
+      initializer.write_settings_json
     end
 
-    desc "open", "Open a page on the services's first port"
+    desc "open", "Open a page on the services's first port or specified port"
     option :service, default: "web"
     option :path, default: "/"
     option :container_port, default: 3000, type: :numeric

@@ -84,5 +84,34 @@ module JadeSystemsToolbox
         assert_equal expected, File.read("./.vscode/settings.json")
       end
     end
+
+    # The above aren't really needed, because we know we'll have
+    # the template file for settings.json.
+
+    def test_get_and_write_devcontainer_file
+      Dir.chdir(temp_dir) do
+        Vscode.new.write_devcontainer_json
+
+        assert Pathname("./.devcontainer.json").exist?
+      end
+    end
+
+    def test_get_and_write_extensions_file
+      Dir.chdir(temp_dir) do
+        Vscode.new.write_extensions_json
+
+        assert Pathname("./.vscode/extensions.json").exist?
+      end
+    end
+
+    def test_get_and_write_settings_file
+      Dir.chdir(temp_dir) do
+        Vscode.new.get_and_write_settings_json
+
+        settings = Pathname("./.vscode/settings.json")
+        assert settings.exist?
+        assert_equal "#{Pathname.pwd.basename}", JSON.parse(settings.read)["window.title"]
+      end
+    end
   end
 end
