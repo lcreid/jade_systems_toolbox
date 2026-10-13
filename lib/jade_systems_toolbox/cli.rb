@@ -116,6 +116,12 @@ module JadeSystemsToolbox
       system(compose_command)
     end
 
+    desc "start", "docker compose up -d (aliased as `up`)"
+    def start
+      system("docker compose up -d")
+    end
+    map "up" => :start
+
     desc "stop", "Stop the service(s) but preserve the container(s)"
     def stop
       system("docker compose stop")
@@ -139,12 +145,6 @@ module JadeSystemsToolbox
       ].join(" ")
       system(command)
     end
-
-    desc "up", "docker compose up -d (aliased as `start`)"
-    def up
-      system("docker compose up -d")
-    end
-    map "start" => :up
 
     desc "version", "Show the version number of the tool."
     def version
