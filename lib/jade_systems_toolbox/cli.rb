@@ -28,6 +28,27 @@ module JadeSystemsToolbox
       `devcontainer open`
     end
 
+    desc "exec COMMAND [ARGS]", "Run a command in the container and exit"
+    option :env, repeatable: true, default: [], aliases: "-e", banner: "VAR=value"
+    option :mapping, type: :boolean, default: true, aliases: "-m"
+    option :service, default: "web", aliases: "-s"
+    def exec(command_for_container, *args)
+      service = options[:service]
+      environment_variables = options[:env].map { "-e #{_1}" }.join(" ")
+      port_map_environment_variables = port_map_for_environment(service) if options[:mapping]
+      command = [
+        "docker compose exec",
+        environment_variables,
+        port_map_environment_variables,
+        "-it",
+        service,
+        command_for_container,
+        *args,
+      ].compact.join(" ")
+
+      system(command)
+    end
+
     desc "init", "Initialize compose files and devcontainer.json"
     option :database, default: "sqlite", aliases: "-d"
     option :ruby_version, default: "4.0", aliases: "-r"
@@ -188,7 +209,6 @@ module JadeSystemsToolbox
     end
 
     def handle_argument_error(command, error, args, arity)
-      debugger
       # Check if the error is due to an unknown option or incorrect invocation
       if (error.is_a?(Thor::UnknownArgumentError) || error.message.include?("was called with arguments")) &&
         [ "down" ].include?(command)
