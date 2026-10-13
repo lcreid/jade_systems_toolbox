@@ -59,8 +59,8 @@ module JadeSystemsToolbox
     end
 
     desc "open", "Open a page on the services's first port or specified port"
-    option :service, default: "web"
-    option :path, default: "/"
+    option :service, default: "web", aliases: "-s"
+    option :path, default: "/", alias: "-p"
     option :container_port, default: 3000, type: :numeric
     option :protocol, default: "http"
     def open
@@ -76,7 +76,7 @@ module JadeSystemsToolbox
     end
 
     desc "port [CONTAINER_PORT]", "Get the host port for the CONTAINER_PORT's container port CONTAINER_PORT"
-    option :service, default: "web"
+    option :service, default: "web", aliases: "-s"
     def port(container_port = 3000)
       service = options[:service]
       puts host_port_from_container_port(service:, container_port:)
@@ -98,7 +98,7 @@ module JadeSystemsToolbox
     desc "server [COMMAND]", "Run the server in the container"
     option :env, repeatable: true, default: [], aliases: "-e", banner: "VAR=value"
     option :mapping, type: :boolean, default: true, aliases: "-m"
-    option :service, default: "web"
+    option :service, default: "web", aliases: "-s"
     option :work_dir, aliases: "-w"
     def server(command = "bin/dev")
       service = options[:service]
@@ -124,7 +124,7 @@ module JadeSystemsToolbox
     desc "terminal", "Run a shell in the container"
     option :env, repeatable: true, default: [], aliases: "-e", banner: "VAR=value"
     option :mapping, type: :boolean, default: true, aliases: "-m"
-    option :service, default: "web"
+    option :service, default: "web", aliases: "-s"
     def terminal
       service = options[:service]
       environment_variables = options[:env].map { "-e #{_1}" }.join(" ")
@@ -140,7 +140,7 @@ module JadeSystemsToolbox
       system(command)
     end
 
-    desc "up", "docker compose up -d"
+    desc "up", "docker compose up -d (aliased as `start`)"
     def up
       system("docker compose up -d")
     end
