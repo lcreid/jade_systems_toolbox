@@ -32,18 +32,22 @@ module JadeSystemsToolbox
     option :env, repeatable: true, default: [], aliases: "-e", banner: "VAR=value"
     option :mapping, type: :boolean, default: true, aliases: "-m"
     option :service, default: "web", aliases: "-s"
+    option :work_dir, aliases: "-w"
     def exec(command_for_container, *args)
       service = options[:service]
+      workdir = "-w #{options[:work_dir]} " unless options[:work_dir].nil?
       environment_variables = options[:env].map { "-e #{_1}" }.join(" ")
       port_map_environment_variables = port_map_for_environment(service) if options[:mapping]
+      shell_command = [ command_for_container, *args ].join(" ")
       command = [
         "docker compose exec",
         environment_variables,
         port_map_environment_variables,
+        workdir,
         "-it",
         service,
-        command_for_container,
-        *args,
+        "sh -c",
+        "'#{shell_command}'",
       ].compact.join(" ")
 
       system(command)
@@ -116,24 +120,27 @@ module JadeSystemsToolbox
       end
     end
 
-    desc "server [COMMAND]", "Run the server in the container"
+    desc "server [COMMAND] [ARGS]", "Run the server in the container"
     option :env, repeatable: true, default: [], aliases: "-e", banner: "VAR=value"
     option :mapping, type: :boolean, default: true, aliases: "-m"
     option :service, default: "web", aliases: "-s"
     option :work_dir, aliases: "-w"
-    def server(command = "bin/dev")
+    def server(command = "bin/dev", *args)
       service = options[:service]
       workdir = "-w #{options[:work_dir]} " unless options[:work_dir].nil?
       environment_variables = options[:env].map { "-e #{_1}" }.join(" ")
       port_map_environment_variables = port_map_for_environment(service) if options[:mapping]
+      shell_command = [ command, *args ].join(" ")
       compose_command = [
         "docker compose exec",
         environment_variables,
         port_map_environment_variables,
         workdir,
         service,
-        command,
+        "sh -c",
+        "'#{shell_command}'",
       ].compact.join(" ")
+
       system(compose_command)
     end
 
