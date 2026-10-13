@@ -2,10 +2,10 @@
 
 module JadeSystemsToolbox
   class Cli < Thor
-    # This and other improvements from Matt: https://mattbrictson.com/blog/fixing-thor-cli-behavior
-    check_unknown_options!
+    stop_on_unknown_option! :down
 
     class << self
+      # This and other improvements from Matt: https://mattbrictson.com/blog/fixing-thor-cli-behavior
       def exit_on_failure? = true
     end
 
@@ -14,13 +14,13 @@ module JadeSystemsToolbox
 
     class_option :verbose, type: :boolean, default: false, aliases: "-v"
 
-    desc "down", "docker compose down. Deletes the container. You probably want stop."
+    desc "down -- COMPOSE_ARGS", "docker compose down. Deletes the container. You probably want stop."
     option :force, default: "n", aliases: "-f"
-    def down
+    def down(*command_arguments)
       force = ask("tool down destroys the containers. Are you sure [y/N]?").downcase unless options[:force] == "y"
       exit(1) if force[0] != "y"
 
-      system("docker compose down")
+      system(([ "docker compose down" ] + command_arguments).join(" "))
     end
 
     desc "edit", "devcontainer open"
@@ -185,6 +185,19 @@ module JadeSystemsToolbox
       port_map(service).map do |container_port, host_port|
         "-e HOST_PORT_#{container_port}=#{host_port}"
       end.join(" ")
+    end
+
+    def handle_argument_error(command, error, args, arity)
+      debugger
+      # Check if the error is due to an unknown option or incorrect invocation
+      if (error.is_a?(Thor::UnknownArgumentError) || error.message.include?("was called with arguments")) &&
+        [ "down" ].include?(command)
+        # Return to let Thor proceed instead of raising the error
+        nil
+      else
+        # Fallback to standard Thor behavior for actual code bugs
+        super
+      end
     end
   end
 end
