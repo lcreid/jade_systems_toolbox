@@ -29,19 +29,21 @@ gem install --user-install jade_systems_toolbox
 
 ```terminal
 Commands:
-  tool down                   # docker compose down. Deletes the container. You probably want stop.
+  tool down -- COMPOSE_ARGS   # docker compose down. Deletes the container. You probably want stop.
   tool edit                   # devcontainer open
+  tool exec COMMAND [ARGS]    # Run a command in the container and exit
   tool help [COMMAND]         # Describe available commands or one specific command
   tool init                   # Initialize compose files and devcontainer.json
   tool initialize_docker      # Initialize compose files
-  tool initilize_vscode       # Initialize devcontainer.json for vscode
-  tool open                   # Open a page on the services's first port
+  tool initialize_vscode      # Initialize devcontainer.json for vscode
+  tool open                   # Open a page on the services's first port or specified port
   tool port [CONTAINER_PORT]  # Get the host port for the CONTAINER_PORT's container port CONTAINER_PORT
   tool ports                  # Get the host ports for the container ports defined in `compose.yml`
   tool server [COMMAND]       # Run the server in the container
+  tool start [COMPOSE_ARGS]   # docker compose up -d (aliased as `up`)
   tool stop                   # Stop the service(s) but preserve the container(s)
   tool terminal               # Run a shell in the container
-  tool up                     # docker compose up -d
+  tool tree                   # Print a tree of all available commands
   tool version                # Show the version number of the tool.
 
 Options:
@@ -117,12 +119,22 @@ You're free to modify the `compose.yml` (and `compose.override.yml` on Linux). N
 #### Start the Containers
 
 ```bash
-tool up
+tool start
 ```
 
 This takes a while to run, the first time you run it when the image isn't already downloaded to your computer.
 
-### Open a Terminal Session
+You can add additional Docker Compose arguments to the command line. For example:
+
+```bash
+tool start --remove-orphans
+```
+
+If any of the command's arguments are the same as any of `tool`'s arguments,
+separate the `exec` command from the rest of the command line with `--`,
+like this: `tool start -- -v`.
+
+#### Open a Terminal Session
 
 ```bash
 tool terminal
@@ -169,7 +181,7 @@ tool server --no-mapping
 This runs `bin/dev`. To run something else, e.g. a bare Puma so you can debug it:
 
 ```bash
-tool server "bin/rails s -b 0.0.0.0"
+tool server bin/rails s -b 0.0.0.0
 ```
 
 If you have other services running servers, or the server is in a sub-directory of your project:
@@ -214,6 +226,33 @@ tool open --path letter_opener
 tool stop
 ```
 
+You can add additional Docker Compose arguments to the command line. For example:
+
+```bash
+tool stop --remove-orphans
+```
+
+If any of the command's arguments are the same as any of `tool`'s arguments,
+separate the `exec` command from the rest of the command line with `--`,
+like this: `tool stop -- -v`.
+
+#### Run a Single Command in a Container
+
+```bash
+tool exec ls -l ..
+```
+
+Some things to watch for:
+
+- If any of the command's arguments are the same as any of `tool`'s arguments,
+separate the `exec` command from the rest of the command line with `--`,
+like this: `tool exec -- ls -l -t ..`.
+- The shell on the host processes the command line,
+so you need to quote or escape the command if you want variable expansion
+and other shell features to happen in the container.
+For example: `tool exec ls -l '$HOME'` to show the home directory in the container, not your home directory
+(which probably doesn't exist in the container).
+
 #### Bring Down the Containers
 
 This destroys the containers, which will likely destroy all your gems.
@@ -221,6 +260,16 @@ This destroys the containers, which will likely destroy all your gems.
 ```bash
 tool down
 ```
+
+You can add additional Docker Compose arguments to the command line. For example: NOTE THAT THE FOLLOWING COMMAND IS VERY DESTRUCTIVE. It destroys the volume where you might have your development and test databases, or other important data:
+
+```bash
+tool start -- -v
+```
+
+If any of the command's arguments are the same as any of `tool`'s arguments,
+separate the `exec` command from the rest of the command line with `--`,
+like this: `tool down -- -v`.
 
 Skip the confirmation mesage with:
 
