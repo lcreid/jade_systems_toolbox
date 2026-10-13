@@ -16,11 +16,11 @@ module JadeSystemsToolbox
 
     desc "down -- COMPOSE_ARGS", "docker compose down. Deletes the container. You probably want stop."
     option :force, default: "n", aliases: "-f"
-    def down(*command_arguments)
+    def down(*compose_args)
       force = ask("tool down destroys the containers. Are you sure [y/N]?").downcase unless options[:force] == "y"
       exit(1) if force[0] != "y"
 
-      system(([ "docker compose down" ] + command_arguments).join(" "))
+      system(([ "docker compose down" ] + compose_args).join(" "))
     end
 
     desc "edit", "devcontainer open"
@@ -116,9 +116,9 @@ module JadeSystemsToolbox
       system(compose_command)
     end
 
-    desc "start", "docker compose up -d (aliased as `up`)"
-    def start
-      system("docker compose up -d")
+    desc "start [COMPOSE_ARGS]", "docker compose up -d (aliased as `up`)"
+    def start(*compose_args)
+      system(([ "docker compose up -d" ] + compose_args).join(" "))
     end
     map "up" => :start
 
