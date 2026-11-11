@@ -4,9 +4,9 @@ services:
       - "140"
     volumes:
       - ~/.gitconfig:/home/dev/.gitconfig
-      # - /etc/passwd:/etc/passwd:ro
-      - ~/.gem/credentials:/home/dev/.gem/credentials:ro
-      # $HOME here is your host computer's `~`, e.g. `/home/reid`.
+      - ~/.gem/credentials:/home/dev/.local/share/gem/credentials:ro
+      # If your host has gems in the legacy directory, uncomment the following and comment the preceding line.
+      # - ~/.gem/credentials:/home/dev/.gem/credentials:ro
       # `ssh` explicitly looks for its config in the home directory from `/etc/passwd`,
       # so the target for this has to look like your home directory on the host.
       - ~/.ssh:/home/dev/.ssh:ro
