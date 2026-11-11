@@ -3,7 +3,7 @@
 This gem installs a program to help do container-based development. It provides functions to:
 
 * Prepare a directory for development in containers, including some files to configure VScode.
-* Bring up the container(s).
+* Start the container(s).
 * Open VScode on the code in the container.
 * Open a browser window on the application-under-development's web server.
 * Open a terminal session on the application container.
@@ -58,7 +58,7 @@ The broad steps to start a brand new project are:
 1. Create a directory for the project, and change directory into the new directory.
 1. Decide which container(s) you want to use.
 1. Initialize the container(s).
-1. Bring up the container(s).
+1. Start the container(s).
 1. Open a terminal session and create the application (e.g. `rails new` if you're doing a Rails project.)
 1. Run the editor and otherwise do what you need to do to create your project.
 1. When the web server is ready to run (if you're developing a web app), run the server.
@@ -264,7 +264,7 @@ tool down
 You can add additional Docker Compose arguments to the command line. For example: NOTE THAT THE FOLLOWING COMMAND IS VERY DESTRUCTIVE. It destroys the volume where you might have your development and test databases, or other important data:
 
 ```bash
-tool start -- -v
+tool down --volumes --remove-orphans
 ```
 
 If any of the command's arguments are the same as any of `tool`'s arguments,
