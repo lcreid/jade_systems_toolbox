@@ -29,7 +29,7 @@ gem install --user-install jade_systems_toolbox
 
 ```terminal
 Commands:
-  tool down -- COMPOSE_ARGS   # docker compose down. Deletes the container. You probably want stop.
+  tool down -- [COMPOSE_ARGS] # docker compose down. Deletes the container. You probably want stop.
   tool edit                   # devcontainer open
   tool exec COMMAND [ARGS]    # Run a command in the container and exit
   tool help [COMMAND]         # Describe available commands or one specific command
@@ -85,7 +85,9 @@ tool init
 
 The initialization installs
 
-* A `compose.yml` file for Rails development with a SQLite database, using Ruby 3.4, and the `bookworm` version of Debian.
+* A `compose.yml` file for Rails development with a SQLite database, using the latest released version of Ruby,
+and the latest stable version of Debian.
+(Give or take. We don't track the releases so closely. Raise and issue if you need an upgrade.)
 * On Linux, a `compose.override.yml` file.
 * A `.devcontainer.json` file, so VScode can edit without the context of the container.
 * `.vscode/settings.json` and `vscode/extensions.json` so developers have a consistent experience in VScode (mostly linting and autoformatting).
@@ -130,8 +132,8 @@ You can add additional Docker Compose arguments to the command line. For example
 tool start --remove-orphans
 ```
 
-If any of the command's arguments are the same as any of `tool`'s arguments,
-separate the `exec` command from the rest of the command line with `--`,
+If any of the Docker Compose arguments are the same as any of `tool`'s arguments,
+separate the `start` command from the rest of the command line with `--`,
 like this: `tool start -- -v`.
 
 #### Open a Terminal Session
@@ -232,7 +234,7 @@ You can add additional Docker Compose arguments to the command line. For example
 tool stop --remove-orphans
 ```
 
-If any of the command's arguments are the same as any of `tool`'s arguments,
+If any of the Docker Compose arguments are the same as any of `tool`'s arguments,
 separate the `exec` command from the rest of the command line with `--`,
 like this: `tool stop -- -v`.
 
@@ -244,7 +246,7 @@ tool exec ls -l ..
 
 Some things to watch for:
 
-- If any of the command's arguments are the same as any of `tool`'s arguments,
+- If any of the Docker Compose arguments are the same as any of `tool`'s arguments,
 separate the `exec` command from the rest of the command line with `--`,
 like this: `tool exec -- ls -l -t ..`.
 - The shell on the host processes the command line,
@@ -267,7 +269,7 @@ You can add additional Docker Compose arguments to the command line. For example
 tool down --volumes --remove-orphans
 ```
 
-If any of the command's arguments are the same as any of `tool`'s arguments,
+If any of the Docker Compose arguments are the same as any of `tool`'s arguments,
 separate the `exec` command from the rest of the command line with `--`,
 like this: `tool down -- -v`.
 
@@ -293,7 +295,7 @@ To run in another directory, use the path from the directory you're in, to the d
 ruby -I ../jade_systems_toolbox/lib ../jade_systems_toolbox/exe/tool [COMMAND]
 ```
 
-To install this gem onto your local machine, build it: `gem build jade_systems_toolbox.gemspec`, and install it: `gem install -l jade_systems_toolbox-0.1.4.gem`. (Change the version number to match the current version number.)
+To install this gem onto your local machine, build it: `gem build jade_systems_toolbox.gemspec`, and install it: `gem install -l jade_systems_toolbox-0.2.0.gem`. (Change the version number to match the current version number.)
 
 ## Release
 

@@ -14,7 +14,7 @@ module JadeSystemsToolbox
 
     class_option :verbose, type: :boolean, default: false, aliases: "-v"
 
-    desc "down -- COMPOSE_ARGS", "docker compose down. Deletes the container. You probably want stop."
+    desc "down -- [COMPOSE_ARGS]", "docker compose down. Deletes the container. You probably want stop."
     option :force, default: "n", aliases: "-f"
     def down(*compose_args)
       force = ask("tool down destroys the containers. Are you sure [y/N]?").downcase unless options[:force] == "y"
