@@ -97,7 +97,16 @@ module JadeSystemsToolbox
       container_ports = compose_yaml.dig("services", service, "ports")
       container_port = container_ports&.[](0) || container_port
       path = "/#{path}" if path[0] != "/"
-      `open "#{protocol}://localhost:#{host_port_from_container_port(service:, container_port:)}#{path}"`
+      url = "#{protocol}://localhost:#{host_port_from_container_port(service:, container_port:)}#{path}"
+      if `command -v "open"`
+        # Real Unix :-)
+        system "open #{url}"
+      elsif `command -v "cmd.exe"`
+        # WSL because this opens a URL in the browser, which will be on Windows.
+        system "cmd.exe /c start #{url}"
+      else
+        raise ArgumentError, "no suitable command available to open app."
+      end
     end
 
     desc "port [CONTAINER_PORT]", "Get the host port for the CONTAINER_PORT's container port CONTAINER_PORT"
