@@ -98,14 +98,14 @@ module JadeSystemsToolbox
       container_port = container_ports&.[](0) || container_port
       path = "/#{path}" if path[0] != "/"
       url = "#{protocol}://localhost:#{host_port_from_container_port(service:, container_port:)}#{path}"
-      if `command -v "open"`
+      if system("sh -c 'command -v open'")
         # Real Unix :-)
-        system "open #{url}"
-      elsif `command -v "cmd.exe"`
+        system("open #{url}")
+      elsif system("sh -c 'command -v cmd.exe'")
         # WSL because this opens a URL in the browser, which will be on Windows.
-        system "cmd.exe /c start #{url}"
+        system("cmd.exe /c start #{url}")
       else
-        raise ArgumentError, "no suitable command available to open app."
+        raise ArgumentError, "No suitable command available to open app."
       end
     end
 
